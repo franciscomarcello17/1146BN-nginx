@@ -4,10 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum RoleType {
-    USUARIO(1),
-    PRODUTOR(2),
-    RECRUTADOR(3),
-    ADMIN(4);
+    USER(1),
+    MANAGER(2),
+    ADMIN(3);
 
     private final int level;
 

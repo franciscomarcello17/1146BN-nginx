@@ -24,7 +24,7 @@ public class RegisterUserHandler {
         }
 
         String hashedPassword = passwordHasher.hash(password);
-        User user = new User(name, emailObj, RoleType.USUARIO, hashedPassword);
+        User user = new User(name, emailObj, RoleType.USER, hashedPassword);
 
         User savedUser = userRepository.save(user);
 
