@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="card">
+    <h2>{{ editando ? 'Editar Fornecedor' : 'Novo Fornecedor' }}</h2>
+
+    <div *ngIf="carregando && editando" class="loading">
+      Carregando fornecedor...
+    </div>
+
+    <form *ngIf="!carregando || !editando" (submit)="salvar()" class="form">
+      <div class="input-group">
+        <label>Nome *</label>
+        <input 
+          [(ngModel)]="fornecedor.nome" 
+          name="nome" 
+          type="text" 
+          required
+          maxlength="100"
+          placeholder="Nome completo ou razão social">
+      </div>
+
+      <div class="input-group">
+        <label>Documento (CPF/CNPJ) *</label>
+        <input 
+          [(ngModel)]="fornecedor.documento" 
+          name="documento" 
+          type="text" 
+          required
+          (blur)="formatarDocumento()"
+          placeholder="000.000.000-00 ou 00.000.000/0000-00">
+      </div>
+
+      <div class="input-group">
+        <label>Telefone</label>
+        <input 
+          [(ngModel)]="fornecedor.telefone" 
+          name="telefone" 
+          type="text" 
+          (blur)="formatarTelefone()"
+          placeholder="(00) 00000-0000">
+      </div>
+
+      <div class="button-group">
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          [disabled]="carregando">
+          {{ carregando ? 'Salvando...' : (editando ? 'Atualizar' : 'Criar') }}
+        </button>
+
+        <button 
+          type="button" 
+          class="btn-secondary" 
+          routerLink="/cadastros/fornecedores"
+          [disabled]="carregando">
+          Cancelar
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="mensagem" class="mensagem" [class.error]="mensagem.includes('Erro')">
+      {{ mensagem }}
+    </div>
+  </div>
+</div>

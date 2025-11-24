@@ -1,0 +1,72 @@
+<div class="container">
+  <div class="card">
+    <h2>Registrar Entrada no Estoque</h2>
+
+    <div *ngIf="carregando && !produto" class="loading">
+      Carregando informações do produto...
+    </div>
+
+    <div *ngIf="produto" class="content">
+      <!-- Informações do Produto -->
+      <div class="produto-info">
+        <h3>Produto</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>ID:</label>
+            <span>{{ produto.id }}</span>
+          </div>
+          <div class="info-item">
+            <label>Nome:</label>
+            <span>{{ produto.nome }}</span>
+          </div>
+          <div class="info-item">
+            <label>Descrição:</label>
+            <span>{{ produto.descricao || 'Nenhuma descrição' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulário de Entrada -->
+      <form (submit)="registrarEntrada()" class="form">
+        <div class="input-group">
+          <label for="quantidade">Quantidade de Entrada *</label>
+          <input
+            id="quantidade"
+            [(ngModel)]="quantidade"
+            name="quantidade"
+            type="number"
+            min="1"
+            max="100000"
+            required
+            placeholder="Quantidade a ser adicionada">
+          <small>Informe a quantidade que está entrando no estoque</small>
+        </div>
+
+        <div class="button-group">
+          <button 
+            type="submit" 
+            class="btn-primary" 
+            [disabled]="carregando">
+            {{ carregando ? 'Registrando...' : 'Registrar Entrada' }}
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-secondary" 
+            [routerLink]="['/estoque/produto', produto.id]"
+            [disabled]="carregando">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="!carregando && !produto" class="not-found">
+      Produto não encontrado.
+    </div>
+
+    <div *ngIf="mensagem" class="mensagem" [class]="mensagem.includes('Erro') ? 'error' : 'success'">
+      {{ mensagem }}
+    </div>
+  </div>
+</div>

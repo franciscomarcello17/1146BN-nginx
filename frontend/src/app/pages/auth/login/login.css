@@ -1,0 +1,93 @@
+/* Centraliza tudo na tela */
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f7fa;
+  padding: 20px;
+}
+
+/* Cartão central */
+.card {
+  width: 320px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card h2 {
+  text-align: center;
+  margin: 0;
+  color: #333;
+}
+
+/* Formulário */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #444;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: 2px solid #1976d2;
+  border-color: transparent;
+}
+
+/* Botões */
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.btn-primary {
+  background: #1976d2;
+  color: white;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background: #0f5fad;
+}
+
+.btn-secondary {
+  background: #e3e3e3;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #d0d0d0;
+}
+
+/* Mensagem */
+.mensagem {
+  text-align: center;
+  font-size: 14px;
+  color: #444;
+}

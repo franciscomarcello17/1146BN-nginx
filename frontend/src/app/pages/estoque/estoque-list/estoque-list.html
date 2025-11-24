@@ -1,0 +1,104 @@
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <h2>Lista de Estoque</h2>
+      <div class="header-actions">
+        <button class="btn-secondary" routerLink="/cadastros/produtos">
+          Gerenciar Produtos
+        </button>
+        <button class="btn-info" routerLink="/estoque/movimentacoes">
+          Ver Movimentações
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="carregando" class="loading">
+      Carregando estoques...
+    </div>
+
+    <div *ngIf="mensagem" class="mensagem" [class.error]="mensagem.includes('Erro')">
+      {{ mensagem }}
+    </div>
+
+    <div *ngIf="!carregando && produtos.length === 0" class="empty-state">
+      Nenhum produto cadastrado.
+    </div>
+
+    <div *ngIf="!carregando && produtos.length > 0" class="content">
+      <!-- Estatísticas -->
+      <div class="stats">
+        <div class="stat-card total">
+          <h3>Total de Produtos</h3>
+          <div class="stat-value">{{ totalProdutos }}</div>
+        </div>
+        <div class="stat-card em-estoque">
+          <h3>Com Estoque</h3>
+          <div class="stat-value">
+            {{ comEstoque }}
+          </div>
+        </div>
+        <div class="stat-card sem-estoque">
+          <h3>Sem Estoque</h3>
+          <div class="stat-value">
+            {{ semEstoque }}
+          </div>
+        </div>
+        <div class="stat-card estoque-baixo">
+          <h3>Estoque Baixo</h3>
+          <div class="stat-value">
+            {{ estoqueBaixo }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela de Estoque -->
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Preço</th>
+              <th>Estoque Atual</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let produto of produtos" [class]="getStatusEstoque(getEstoque(produto.id))">
+              <td>{{ produto.id }}</td>
+              <td>{{ produto.nome }}</td>
+              <td class="descricao">{{ produto.descricao || 'Nenhuma descrição' }}</td>
+              <td class="preco">{{ formatarPreco(produto.preco) }}</td>
+              <td class="quantidade">{{ getEstoque(produto.id) }} unidades</td>
+              <td>
+                <span class="status-badge" [class]="getStatusEstoque(getEstoque(produto.id))">
+                  {{ getTextoStatus(getEstoque(produto.id)) }}
+                </span>
+              </td>
+              <td class="actions">
+                <button 
+                  class="btn-info" 
+                  [routerLink]="['/estoque/produto', produto.id]">
+                  Detalhes
+                </button>
+                <button 
+                  class="btn-primary" 
+                  [routerLink]="['/estoque/entrada', produto.id]">
+                  Entrada
+                </button>
+                <button 
+                  class="btn-warning" 
+                  [routerLink]="['/estoque/saida', produto.id]"
+                  [disabled]="getEstoque(produto.id) === 0">
+                  Saída
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

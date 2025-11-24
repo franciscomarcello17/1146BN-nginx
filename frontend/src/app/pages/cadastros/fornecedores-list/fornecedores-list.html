@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <h2>Lista de Fornecedores</h2>
+      <button class="btn-primary" routerLink="/cadastros/fornecedores/novo">
+        Novo Fornecedor
+      </button>
+    </div>
+
+    <div *ngIf="carregando" class="loading">
+      Carregando fornecedores...
+    </div>
+
+    <div *ngIf="mensagem" class="mensagem" [class.error]="mensagem.includes('Erro')">
+      {{ mensagem }}
+    </div>
+
+    <div *ngIf="!carregando && fornecedores.length === 0" class="empty-state">
+      Nenhum fornecedor cadastrado.
+    </div>
+
+    <div class="table-container" *ngIf="!carregando && fornecedores.length > 0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Documento</th>
+            <th>Telefone</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fornecedor of fornecedores">
+            <td>{{ fornecedor.id }}</td>
+            <td>{{ fornecedor.nome }}</td>
+            <td>{{ fornecedor.documento }}</td>
+            <td>{{ fornecedor.telefone || 'Não informado' }}</td>
+            <td class="actions">
+              <button 
+                class="btn-info" 
+                [routerLink]="['/cadastros/fornecedores', fornecedor.id]">
+                Ver
+              </button>
+              <button 
+                class="btn-secondary"
+                [routerLink]="['/cadastros/fornecedores/novo']" 
+                [queryParams]="{ id: fornecedor.id }">
+                Editar
+              </button>
+              <button 
+                class="btn-danger" 
+                (click)="excluirFornecedor(fornecedor.id)">
+                Excluir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <button class="btn-secondary" routerLink="/home">
+        Voltar
+      </button>
+    </div>
+  </div>
+</div>

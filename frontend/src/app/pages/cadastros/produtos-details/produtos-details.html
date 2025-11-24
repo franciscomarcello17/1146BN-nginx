@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="card">
+    <div *ngIf="carregando" class="loading">
+      Carregando produto...
+    </div>
+
+    <div *ngIf="!carregando && produto" class="details">
+      <div class="header">
+        <h2>Detalhes do Produto</h2>
+        <div class="actions">
+          <button 
+            class="btn-secondary"
+            [routerLink]="['/cadastros/produtos/novo']" 
+            [queryParams]="{ id: produto.id }">
+            Editar
+          </button>
+          <button class="btn-danger" (click)="excluirProduto()">
+            Excluir
+          </button>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>ID:</label>
+          <span>{{ produto.id }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Nome:</label>
+          <span>{{ produto.nome }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Descrição:</label>
+          <span>{{ produto.descricao || 'Nenhuma descrição' }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Preço:</label>
+          <span class="preco">R$ {{ produto.preco | number:'1.2-2' }}</span>
+        </div>
+
+        <div class="detail-item" *ngIf="produto.estoque !== undefined">
+          <label>Estoque:</label>
+          <span>{{ produto.estoque }} unidades</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!carregando && !produto" class="not-found">
+      Produto não encontrado.
+    </div>
+
+    <div *ngIf="mensagem" class="mensagem" [class.error]="mensagem.includes('Erro')">
+      {{ mensagem }}
+    </div>
+
+    <div class="footer">
+      <button class="btn-secondary" routerLink="/cadastros/produtos">
+        Voltar para Lista
+      </button>
+      <button class="btn-info" [routerLink]="['/estoque/produto', produto?.id]" *ngIf="produto">
+        Ver Estoque
+      </button>
+    </div>
+  </div>
+</div>

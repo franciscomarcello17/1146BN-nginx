@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="card">
+    <div *ngIf="carregando" class="loading">
+      Carregando fornecedor...
+    </div>
+
+    <div *ngIf="!carregando && fornecedor" class="details">
+      <div class="header">
+        <h2>Detalhes do Fornecedor</h2>
+        <div class="actions">
+          <button 
+            class="btn-secondary"
+            [routerLink]="['/cadastros/fornecedores/novo']" 
+            [queryParams]="{ id: fornecedor.id }">
+            Editar
+          </button>
+          <button class="btn-danger" (click)="excluirFornecedor()">
+            Excluir
+          </button>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>ID:</label>
+          <span>{{ fornecedor.id }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Nome:</label>
+          <span>{{ fornecedor.nome }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Documento:</label>
+          <span>{{ formatarDocumento(fornecedor.documento) }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label>Telefone:</label>
+          <span>{{ formatarTelefone(fornecedor.telefone) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!carregando && !fornecedor" class="not-found">
+      Fornecedor não encontrado.
+    </div>
+
+    <div *ngIf="mensagem" class="mensagem" [class.error]="mensagem.includes('Erro')">
+      {{ mensagem }}
+    </div>
+
+    <div class="footer">
+      <button class="btn-secondary" routerLink="/cadastros/fornecedores">
+        Voltar para Lista
+      </button>
+    </div>
+  </div>
+</div>

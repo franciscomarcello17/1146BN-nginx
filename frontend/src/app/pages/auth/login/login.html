@@ -1,0 +1,29 @@
+<div class="container">
+
+  <div class="card">
+    <h2>Entrar</h2>
+
+    <form (submit)="login()" class="form">
+
+      <div class="input-group">
+        <label>Email</label>
+        <input [(ngModel)]="email" name="email" type="email" required>
+      </div>
+
+      <div class="input-group">
+        <label>Senha</label>
+        <input [(ngModel)]="password" name="password" type="password" required>
+      </div>
+
+      <button type="submit" class="btn-primary">Entrar</button>
+
+      <button type="button" class="btn-secondary" routerLink="/register">
+        Criar conta
+      </button>
+
+    </form>
+
+    <p class="mensagem">{{ mensagem }}</p>
+  </div>
+
+</div>

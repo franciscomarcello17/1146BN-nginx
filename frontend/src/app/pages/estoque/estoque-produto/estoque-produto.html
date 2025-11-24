@@ -1,0 +1,105 @@
+<div class="container">
+  <div class="card">
+    <div *ngIf="carregando" class="loading">
+      Carregando informações do estoque...
+    </div>
+
+    <div *ngIf="!carregando && produto" class="content">
+      <div class="header">
+        <h2>Estoque - {{ produto.nome }}</h2>
+        <div class="actions">
+          <button 
+            class="btn-primary" 
+            [routerLink]="['/estoque/entrada', produto.id]">
+            Registrar Entrada
+          </button>
+          <button 
+            class="btn-warning"
+            [routerLink]="['/estoque/saida', produto.id]">
+            Registrar Saída
+          </button>
+        </div>
+      </div>
+
+      <!-- Resumo do Estoque -->
+      <div class="estoque-resumo">
+        <div class="resumo-card">
+          <h3>Estoque Atual</h3>
+          <div class="quantidade" [class.baixo]="estoque?.quantidade <= 10">
+            {{ estoque?.quantidade || 0 }} unidades
+          </div>
+          <div *ngIf="estoque?.quantidade <= 10" class="alerta">
+            Estoque baixo!
+          </div>
+        </div>
+      </div>
+
+      <!-- Informações do Produto -->
+      <div class="info-grid">
+        <div class="info-item">
+          <label>ID do Produto:</label>
+          <span>{{ produto.id }}</span>
+        </div>
+        <div class="info-item">
+          <label>Nome:</label>
+          <span>{{ produto.nome }}</span>
+        </div>
+        <div class="info-item">
+          <label>Descrição:</label>
+          <span>{{ produto.descricao || 'Nenhuma descrição' }}</span>
+        </div>
+      </div>
+
+      <!-- Histórico de Movimentações -->
+      <div class="movimentacoes-section">
+        <h3>Histórico de Movimentações</h3>
+        
+        <div *ngIf="movimentacoes.length === 0" class="empty-state">
+          Nenhuma movimentação registrada.
+        </div>
+
+        <div *ngIf="movimentacoes.length > 0" class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>ID Mov.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let mov of movimentacoes">
+                <td>{{ formatarData(mov.data) }}</td>
+                <td>
+                  <span class="badge" [class]="getClasseTipo(mov.tipo)">
+                    {{ getTipoMovimentacao(mov.tipo) }}
+                  </span>
+                </td>
+                <td>{{ mov.quantidade }} unidades</td>
+                <td>#{{ mov.id }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!carregando && !produto" class="not-found">
+      Produto não encontrado.
+    </div>
+
+    <div *ngIf="mensagem" class="mensagem" [class.error]="mensagem.includes('Erro')">
+      {{ mensagem }}
+    </div>
+
+    <div class="footer">
+      <button class="btn-secondary" routerLink="/cadastros/produtos">
+        Voltar para Produtos
+      </button>
+      <button class="btn-info" routerLink="/estoque/movimentacoes">
+        Ver Todas Movimentações
+      </button>
+    </div>
+  </div>
+</div>

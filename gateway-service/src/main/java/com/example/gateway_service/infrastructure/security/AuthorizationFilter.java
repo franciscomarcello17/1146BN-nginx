@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,7 @@ import com.example.gateway_service.domain.user.vo.RoleType;
 import reactor.core.publisher.Mono;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE + 1) // Executa depois do CORS
 public class AuthorizationFilter implements WebFilter {
 
     @Value("${jwt.secret}")
@@ -45,53 +48,56 @@ public class AuthorizationFilter implements WebFilter {
         return exchange.getResponse().setComplete();
     }
 
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
-        String path = request.getPath().toString();
+@Override
+public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    ServerHttpRequest request = exchange.getRequest();
 
-        // Rota não protegida → segue
-        if (routeRoles.entrySet().stream().noneMatch(entry -> path.startsWith(entry.getKey()))) {
-            return chain.filter(exchange);
-        }
-
-        // Verifica Authorization: Bearer <token>
-        String authHeader = request.getHeaders().getFirst("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return unauthorized(exchange);
-        }
-
-        String token = authHeader.substring(7);
-        DecodedJWT jwt;
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes(StandardCharsets.UTF_8));
-            JWTVerifier verifier = JWT.require(algorithm).build();
-            jwt = verifier.verify(token);
-        } catch (Exception e) {
-            return unauthorized(exchange);
-        }
-
-        // Apenas tokens de access são válidos
-        String tokenType = jwt.getClaim("type").asString();
-        if (!"access".equals(tokenType)) {
-            return unauthorized(exchange);
-        }
-
-        // Obtém a role do usuário
-        String userRoleType = jwt.getClaim("role").asString();
-        RoleType role;
-        try {
-            role = RoleType.valueOf(userRoleType);
-        } catch (Exception e) {
-            return unauthorized(exchange);
-        }
-
-        // Verifica permissão
-        if (!isAuthorized(path, role)) {
-            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-            return exchange.getResponse().setComplete();
-        }
-
+    // ⚠️ IGNORA COMPLETAMENTE REQUISIÇÕES OPTIONS (CORS PRE-FLIGHT)
+    if (request.getMethod().name().equals("OPTIONS")) {
         return chain.filter(exchange);
     }
+
+    String path = request.getPath().toString();
+
+    // Rota não protegida → segue
+    if (routeRoles.entrySet().stream().noneMatch(entry -> path.startsWith(entry.getKey()))) {
+        return chain.filter(exchange);
+    }
+
+    // Restante do código de verificação do token...
+    String authHeader = request.getHeaders().getFirst("Authorization");
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        return unauthorized(exchange);
+    }
+
+    String token = authHeader.substring(7);
+    DecodedJWT jwt;
+    try {
+        Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        jwt = verifier.verify(token);
+    } catch (Exception e) {
+        return unauthorized(exchange);
+    }
+
+    String tokenType = jwt.getClaim("type").asString();
+    if (!"access".equals(tokenType)) {
+        return unauthorized(exchange);
+    }
+
+    String userRoleType = jwt.getClaim("role").asString();
+    RoleType role;
+    try {
+        role = RoleType.valueOf(userRoleType);
+    } catch (Exception e) {
+        return unauthorized(exchange);
+    }
+
+    if (!isAuthorized(path, role)) {
+        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+        return exchange.getResponse().setComplete();
+    }
+
+    return chain.filter(exchange);
+}
 }

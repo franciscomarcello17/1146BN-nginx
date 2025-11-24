@@ -1,0 +1,81 @@
+<div class="container">
+  <div class="card">
+    <h2>Registrar Saída do Estoque</h2>
+
+    <div *ngIf="carregando && !produto" class="loading">
+      Carregando informações...
+    </div>
+
+    <div *ngIf="produto" class="content">
+      <!-- Informações do Produto -->
+      <div class="produto-info">
+        <h3>Produto</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>ID:</label>
+            <span>{{ produto.id }}</span>
+          </div>
+          <div class="info-item">
+            <label>Nome:</label>
+            <span>{{ produto.nome }}</span>
+          </div>
+          <div class="info-item">
+            <label>Descrição:</label>
+            <span>{{ produto.descricao || 'Nenhuma descrição' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Estoque Atual:</label>
+            <span [class.estoque-baixo]="estoque?.quantidade <= 10" class="estoque-atual">
+              {{ estoque?.quantidade || 0 }} unidades
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulário de Saída -->
+      <form (submit)="registrarSaida()" class="form">
+        <div class="input-group">
+          <label for="quantidade">Quantidade de Saída *</label>
+          <input
+            id="quantidade"
+            [(ngModel)]="quantidade"
+            name="quantidade"
+            type="number"
+            [max]="estoque?.quantidade"
+            min="1"
+            required
+            placeholder="Quantidade a ser retirada">
+          <small>
+            Máximo disponível: {{ estoque?.quantidade || 0 }} unidades
+            <span *ngIf="estoque?.quantidade <= 10" class="alerta-texto"> - Estoque baixo!</span>
+          </small>
+        </div>
+
+        <div class="button-group">
+          <button 
+            type="submit" 
+            class="btn-warning" 
+            [disabled]="carregando || !estoque?.quantidade">
+            {{ carregando ? 'Registrando...' : 'Registrar Saída' }}
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-secondary" 
+            [routerLink]="['/estoque/produto', produto.id]"
+            [disabled]="carregando">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="!carregando && !produto" class="not-found">
+      Produto não encontrado.
+    </div>
+
+    <div *ngIf="mensagem" class="mensagem" [class]="mensagem.includes('Erro') ? 'error' : 'success'">
+      {{ mensagem }}
+    </div>
+  </div>
+</div>
